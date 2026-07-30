@@ -1,0 +1,5 @@
+node_modules/
+database/typing.json
+.env
+.DS_Store
+*.log

@@ -1,0 +1,22 @@
+{
+  "name": "typing-practice",
+  "version": "1.0.0",
+  "description": "Professional typing practice for competitive exams - type from printed material",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.0"
+  },
+  "keywords": [
+    "typing",
+    "practice",
+    "exam",
+    "competitive",
+    "government"
+  ],
+  "license": "MIT"
+}

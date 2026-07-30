@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Practice - Competitive Exams</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="home-page">
+  <div class="theme-toggle">
+    <button id="themeToggle" class="icon-btn" title="Toggle Theme">
+      <span class="theme-icon">🌙</span>
+    </button>
+  </div>
+
+  <main class="container">
+    <div class="hero">
+      <div class="hero-badge">For Competitive Exams</div>
+      <h1 class="hero-title">Typing <span class="gradient-text">Practice</span></h1>
+      <p class="hero-subtitle">
+        Type from printed material — just like the real exam.<br>
+        No on-screen reference text. Pure typing skill.
+      </p>
+      <div class="hero-actions">
+        <a href="/input" class="btn btn-primary btn-lg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Start New Typing Test
+        </a>
+        <a href="/history" class="btn btn-secondary btn-lg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          View History
+        </a>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>Print-Like Practice</h3>
+        <p>Reference text disappears before you start. Type from a physical book or printed paper.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Detailed Analytics</h3>
+        <p>WPM, accuracy, character-level diff, error analysis, and performance ratings.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <h3>Exam Simulation</h3>
+        <p>Realistic countdown, timer, keyboard restrictions — just like the real test.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Track Progress</h3>
+        <p>History, statistics, weekly/monthly graphs, and improvement tracking.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = themeToggle.querySelector('.theme-icon');
+    const savedTheme = localStorage.getItem('typing-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeIcon.textContent = savedTheme === 'dark' ? '☀️' : savedTheme === 'professional' ? '💼' : '🌙';
+
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const themes = ['light', 'dark', 'professional'];
+      const next = themes[(themes.indexOf(current) + 1) % themes.length];
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('typing-theme', next);
+      themeIcon.textContent = next === 'dark' ? '☀️' : next === 'professional' ? '💼' : '🌙';
+    });
+  </script>
+</body>
+</html>
