@@ -265,7 +265,7 @@ function initTypingPage() {
 
   /* ---- Keyboard Shortcuts ---- */
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && state.running && !state.paused && !state.finished) {
+    if (e.ctrlKey && e.key === 'Enter' && state.running && !state.paused && !state.finished) {
       e.preventDefault();
       finishTest();
     }
