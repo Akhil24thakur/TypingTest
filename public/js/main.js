@@ -265,9 +265,9 @@ function initTypingPage() {
 
   /* ---- Keyboard Shortcuts ---- */
   document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'Enter') {
+    if (e.key === 'Enter' && state.running && !state.paused && !state.finished) {
       e.preventDefault();
-      if (!state.finished && state.running) finishTest();
+      finishTest();
     }
     if (e.key === 'Escape') {
       e.preventDefault();
@@ -276,9 +276,6 @@ function initTypingPage() {
       } else if (state.paused) {
         resumeTest();
       }
-    }
-    if (e.key === 'F11') {
-      // F11 is full screen, we let browser handle it
     }
   });
 

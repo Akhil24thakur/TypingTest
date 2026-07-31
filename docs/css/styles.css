@@ -416,6 +416,24 @@ kbd {
 .topbar-left, .topbar-right { display: flex; align-items: center; gap: 8px; flex: 1; }
 .topbar-center { flex: 0; }
 
+.typing-disclaimer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  margin-top: 12px;
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+  animation: fadeIn 0.4s ease;
+}
+
+.disclaimer-icon { font-size: 1.1rem; }
+
 .timer-display {
   font-family: var(--font-mono);
   font-size: 2.2rem;
