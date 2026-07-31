@@ -245,7 +245,13 @@ kbd {
   flex-wrap: wrap;
 }
 
-.page-header h2 { font-size: 1.6rem; font-weight: 700; flex: 1; }
+.page-header h2 { font-size: 1.6rem; font-weight: 700; flex: 1; margin: 0; }
+
+.page-header .text-muted {
+  flex-basis: 100%;
+  margin: 0;
+  padding-left: 100px;
+}
 
 .back-link {
   display: inline-flex;
