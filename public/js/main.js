@@ -402,6 +402,58 @@ function initTypingPage() {
 }
 
 /* ============================================================
+   DIFF HELPERS — LCS-based character alignment
+   ============================================================ */
+function lcsDiff(original, typed) {
+  const o = original.split('');
+  const t = typed.split('');
+  const oLen = o.length, tLen = t.length;
+
+  const dp = Array.from({ length: oLen + 1 }, () => Array(tLen + 1).fill(0));
+  for (let i = 1; i <= oLen; i++) {
+    for (let j = 1; j <= tLen; j++) {
+      dp[i][j] = o[i - 1] === t[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+    }
+  }
+
+  const seq = [];
+  let i = oLen, j = tLen;
+  while (i > 0 && j > 0) {
+    if (o[i - 1] === t[j - 1]) {
+      seq.unshift({ type: 'correct', oc: o[i - 1], tc: t[j - 1] });
+      i--; j--;
+    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+      seq.unshift({ type: 'missing', oc: o[i - 1], tc: null });
+      i--;
+    } else {
+      seq.unshift({ type: 'extra', oc: null, tc: t[j - 1] });
+      j--;
+    }
+  }
+  while (i > 0) { seq.unshift({ type: 'missing', oc: o[i - 1], tc: null }); i--; }
+  while (j > 0) { seq.unshift({ type: 'extra', oc: null, tc: t[j - 1] }); j--; }
+
+  return seq;
+}
+
+function mergeSubstitutions(seq) {
+  const merged = [];
+  for (const item of seq) {
+    const last = merged[merged.length - 1];
+    if (item.type === 'missing' && last && last.type === 'extra') {
+      merged.pop();
+      merged.push({ type: 'incorrect', oc: item.oc, tc: last.tc });
+    } else if (item.type === 'extra' && last && last.type === 'missing') {
+      merged.pop();
+      merged.push({ type: 'incorrect', oc: last.oc, tc: item.tc });
+    } else {
+      merged.push(item);
+    }
+  }
+  return merged;
+}
+
+/* ============================================================
    RESULT PAGE
    ============================================================ */
 function initResultPage() {
@@ -471,26 +523,36 @@ function initResultPage() {
     const diffOrig = document.getElementById('diffOriginal');
     const diffTyped = document.getElementById('diffTyped');
 
-    const oChars = original.split('');
-    const tChars = typed.split('');
-    const maxLen = Math.max(oChars.length, tChars.length);
+    const CHUNK = 800;
+    const oLen = original.length, tLen = typed.length;
+
+    let seq = [];
+    if (Math.max(oLen, tLen) <= CHUNK) {
+      seq = lcsDiff(original, typed);
+    } else {
+      const chunkCount = Math.max(Math.ceil(oLen / CHUNK), Math.ceil(tLen / CHUNK));
+      for (let c = 0; c < chunkCount; c++) {
+        const oStart = c * CHUNK, oEnd = Math.min((c + 1) * CHUNK, oLen);
+        const tStart = c * CHUNK, tEnd = Math.min((c + 1) * CHUNK, tLen);
+        seq = seq.concat(lcsDiff(original.slice(oStart, oEnd), typed.slice(tStart, tEnd)));
+      }
+    }
+
+    const merged = mergeSubstitutions(seq);
 
     let origHtml = '', typedHtml = '';
 
-    for (let i = 0; i < maxLen; i++) {
-      const oc = oChars[i] || '';
-      const tc = tChars[i] || '';
-
-      if (oc === tc) {
-        origHtml += `<span class="diff-correct">${escapeHtml(oc)}</span>`;
-        typedHtml += `<span class="diff-correct">${escapeHtml(tc)}</span>`;
-      } else if (oc && tc) {
-        origHtml += `<span class="diff-incorrect">${escapeHtml(oc)}</span>`;
-        typedHtml += `<span class="diff-incorrect">${escapeHtml(tc)}</span>`;
-      } else if (oc && !tc) {
-        origHtml += `<span class="diff-missing">${escapeHtml(oc)}</span>`;
-      } else if (!oc && tc) {
-        typedHtml += `<span class="diff-extra">${escapeHtml(tc)}</span>`;
+    for (const m of merged) {
+      if (m.type === 'correct') {
+        origHtml += `<span class="diff-correct">${escapeHtml(m.oc)}</span>`;
+        typedHtml += `<span class="diff-correct">${escapeHtml(m.tc)}</span>`;
+      } else if (m.type === 'incorrect') {
+        origHtml += `<span class="diff-incorrect">${escapeHtml(m.oc)}</span>`;
+        typedHtml += `<span class="diff-incorrect">${escapeHtml(m.tc)}</span>`;
+      } else if (m.type === 'missing') {
+        origHtml += `<span class="diff-missing">${escapeHtml(m.oc)}</span>`;
+      } else if (m.type === 'extra') {
+        typedHtml += `<span class="diff-extra">${escapeHtml(m.tc)}</span>`;
       }
     }
 
