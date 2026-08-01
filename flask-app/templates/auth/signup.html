@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Sign up — TypingTest{% endblock %}
+{% block content %}
+<div class="container auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Create your account</h2>
+      <p class="text-muted">Free forever. Your tests and Net WPM history stay private to you.</p>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" class="auth-form" autocomplete="on">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="{{ request.form.get('username', '') }}" required autofocus>
+      </div>
+      <div class="form-group">
+        <label for="email">Email (optional)</label>
+        <input type="email" id="email" name="email" value="{{ request.form.get('email', '') }}">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+        <span class="form-hint">At least 6 characters.</span>
+      </div>
+      <div class="form-group">
+        <label for="confirm">Confirm password</label>
+        <input type="password" id="confirm" name="confirm" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Sign up</button>
+    </form>
+
+    <p class="auth-footer text-muted">
+      Already have an account? <a href="{{ url_for('login') }}">Log in</a>.
+    </p>
+  </div>
+</div>
+{% endblock %}

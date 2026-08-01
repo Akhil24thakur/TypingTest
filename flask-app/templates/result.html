@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Result — {{ test['title'] }}{% endblock %}
+{% block content %}
+<div class="container result-page">
+  <div class="page-header">
+    <a href="{{ url_for('history_page') }}" class="back-link">← History</a>
+    <h2>Test Result</h2>
+    <p class="text-muted">{{ test['title'] }} · {{ test['created_at'] }}</p>
+  </div>
+
+  <div class="rating-banner">
+    <div class="rating-circle">
+      <span class="rating-letter">{{ rating['grade'] }}</span>
+    </div>
+    <div class="rating-info">
+      <h3>{{ rating['label'] }}</h3>
+      <p>Rating based on Net WPM.</p>
+    </div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon speed-icon">⚡</div>
+      <div class="metric-value">{{ test['gross_wpm']|round(1) }}</div>
+      <div class="metric-label">Gross WPM</div>
+    </div>
+    <div class="metric-card net-highlight">
+      <div class="metric-icon net-icon">🎯</div>
+      <div class="metric-value">{{ test['net_wpm']|round(1) }}</div>
+      <div class="metric-label">Net WPM (wrong words deducted)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon acc-icon">🎯</div>
+      <div class="metric-value">{{ test['word_accuracy']|round(1) }}%</div>
+      <div class="metric-label">Word Accuracy</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon time-icon">⏱️</div>
+      <div class="metric-value">{{ '%d:%02d' % (test['duration_seconds'] // 60, test['duration_seconds'] % 60) }}</div>
+      <div class="metric-label">Duration</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Word Breakdown</h3></div>
+    <div class="word-metrics-grid">
+      <div class="word-metric correct-word">
+        <span class="wm-label">Correct words</span>
+        <span class="wm-value">{{ test['correct_words'] }}</span>
+      </div>
+      <div class="word-metric incorrect-word">
+        <span class="wm-label">Wrong words</span>
+        <span class="wm-value">{{ test['wrong_words'] }}</span>
+      </div>
+      <div class="word-metric missing-word">
+        <span class="wm-label">Missing words</span>
+        <span class="wm-value">{{ test['missing_words'] }}</span>
+      </div>
+      <div class="word-metric extra-word">
+        <span class="wm-label">Extra words</span>
+        <span class="wm-value">{{ test['extra_words'] }}</span>
+      </div>
+    </div>
+    <p class="text-muted net-formula">
+      Net WPM = (words typed − wrong words) ÷ minutes = {{ test['correct_words'] }} ÷ {{ '%0.1f' % (test['duration_seconds'] / 60) }} = {{ test['net_wpm']|round(1) }}
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Character Comparison</h3></div>
+    <div class="diff-container">
+      <div class="diff-section">
+        <h4>Original</h4>
+        <div class="diff-content" id="diffOriginal"></div>
+      </div>
+      <div class="diff-section">
+        <h4>Typed</h4>
+        <div class="diff-content" id="diffTyped"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-actions">
+    <a href="{{ url_for('input_page') }}" class="btn btn-primary">New Test</a>
+    <a href="{{ url_for('history_page') }}" class="btn btn-secondary">History</a>
+    <button class="btn btn-secondary" id="printBtn">Print / PDF</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.RESULT_DATA = {
+    original: {{ test['original_text']|tojson }},
+    typed: {{ test['typed_text']|tojson }}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/result.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}History — TypingTest{% endblock %}
+{% block content %}
+<div class="container history-page">
+  <div class="page-header">
+    <a href="{{ url_for('home') }}" class="back-link">← Home</a>
+    <h2>Your History</h2>
+    <p class="text-muted">All your tests, ranked by Net WPM.</p>
+  </div>
+
+  {% if summary %}
+  <div class="stats-grid">
+    <div class="stat-card highlight">
+      <div class="stat-card-value">{{ summary.count }}</div>
+      <div class="stat-card-label">Tests Taken</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-value">{{ summary.best_net_wpm|round(1) }}</div>
+      <div class="stat-card-label">Best Net WPM</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-value">{{ summary.avg_net_wpm|round(1) }}</div>
+      <div class="stat-card-label">Average Net WPM</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-value">{{ summary.overall_word_accuracy|round(1) }}%</div>
+      <div class="stat-card-label">Overall Accuracy</div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if tests %}
+  <div class="card">
+    <div class="table-responsive">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Duration</th>
+            <th>Gross</th>
+            <th>Net</th>
+            <th>Correct / Wrong</th>
+            <th>Accuracy</th>
+            <th>Grade</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in tests %}
+          <tr>
+            <td>{{ t['id'] }}</td>
+            <td><a href="{{ url_for('result_page', test_id=t['id']) }}">{{ t['title'] }}</a></td>
+            <td>{{ t['created_at'] }}</td>
+            <td>{{ '%d:%02d' % (t['duration_seconds'] // 60, t['duration_seconds'] % 60) }}</td>
+            <td>{{ t['gross_wpm']|round(1) }}</td>
+            <td><strong>{{ t['net_wpm']|round(1) }}</strong></td>
+            <td>{{ t['correct_words'] }} / {{ t['wrong_words'] }}</td>
+            <td>{{ t['word_accuracy']|round(1) }}%</td>
+            <td><span class="rating-pill {{ t['rating']['css'] }}">{{ t['rating']['grade'] }} · {{ t['rating']['label'] }}</span></td>
+            <td>
+              <button class="action-btn danger" data-delete="{{ t['id'] }}">Delete</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <p class="text-muted text-center" style="padding: 24px 0;">
+      No tests yet. <a href="{{ url_for('input_page') }}">Take your first test</a>.
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.querySelectorAll('[data-delete]').forEach(function (btn) {
+    btn.addEventListener('click', async function () {
+      if (!confirm('Delete this test result?')) return;
+      const res = await fetch('/api/tests/' + btn.dataset.delete, { method: 'DELETE' });
+      if (res.ok) { window.location.reload(); } else { alert('Failed to delete.'); }
+    });
+  });
+</script>
+{% endblock %}

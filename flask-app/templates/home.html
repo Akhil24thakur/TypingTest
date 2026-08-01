@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}TypingTest — Competitive Exam Typing Practice{% endblock %}
+{% block content %}
+<div class="container home-page">
+  <section class="hero">
+    <span class="hero-badge">⚡ Competitive Exam Grade</span>
+    <h1 class="hero-title">Type from printed material.<br><span class="gradient-text">Net WPM decides.</span></h1>
+    <p class="hero-subtitle">
+      Practice typing the way exams test it — reference text is hidden during the test.
+      Wrong words are deducted from your speed to give an honest <strong>Net WPM</strong>.
+    </p>
+    <div class="hero-actions">
+      {% if user %}
+        <a href="{{ url_for('input_page') }}" class="btn btn-primary btn-lg">Start a Test</a>
+        <a href="{{ url_for('history_page') }}" class="btn btn-secondary btn-lg">View History</a>
+      {% else %}
+        <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Create Free Account</a>
+        <a href="{{ url_for('login') }}" class="btn btn-secondary btn-lg">Login</a>
+      {% endif %}
+    </div>
+  </section>
+
+  {% if user and stats %}
+  <section class="stats-grid">
+    <div class="stat-card highlight">
+      <div class="stat-card-value">{{ stats.count }}</div>
+      <div class="stat-card-label">Tests Taken</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-value">{{ stats.best_net_wpm if stats.best_net_wpm is not none else '—' }}</div>
+      <div class="stat-card-label">Best Net WPM</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-value">{{ stats.avg_net_wpm if stats.avg_net_wpm is not none else '—' }}</div>
+      <div class="stat-card-label">Average Net WPM</div>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>Net WPM</h3>
+      <p>Gross WPM minus wrong words. The speed that actually counts in exams.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👁️</div>
+      <h3>Hidden Reference</h3>
+      <p>Reference text stays hidden while you type — just like the printed-sheet exam.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👤</div>
+      <h3>Per-User History</h3>
+      <p>Every test saved to your account. Track Net WPM progress over time.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <h3>Word-Level Diff</h3>
+      <p>See exactly which words were wrong, missing, or extra after each test.</p>
+    </div>
+  </section>
+</div>
+{% endblock %}

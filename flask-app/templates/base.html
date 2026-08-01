@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}TypingTest{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+  <button class="theme-toggle icon-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a class="navbar-brand" href="{{ url_for('home') }}">⚡ TypingTest</a>
+      <div class="navbar-links">
+        {% if user %}
+          <a href="{{ url_for('input_page') }}">New Test</a>
+          <a href="{{ url_for('history_page') }}">History</a>
+          <span class="navbar-user" title="{{ user['email'] or '' }}">{{ user['username'] }}</span>
+          <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">Logout</a>
+        {% else %}
+          <a href="{{ url_for('login') }}">Login</a>
+          <a href="{{ url_for('signup') }}" class="btn btn-primary btn-sm">Sign up</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container flash-area">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+
+  <script>
+    (function () {
+      var saved = localStorage.getItem('typing-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+      var btn = document.getElementById('themeToggle');
+      if (btn) {
+        btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+        btn.addEventListener('click', function () {
+          var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('typing-theme', next);
+          btn.textContent = next === 'dark' ? '☀️' : '🌙';
+        });
+      }
+    })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

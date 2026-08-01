@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Enter Reference Text — TypingTest{% endblock %}
+{% block content %}
+<div class="container input-page">
+  <div class="page-header">
+    <a href="{{ url_for('home') }}" class="back-link">← Home</a>
+    <h2>Enter the reference passage</h2>
+    <p class="text-muted">Paste or type the passage you will copy. During the test it stays hidden — you type from your printed sheet.</p>
+  </div>
+
+  <form method="POST" class="card">
+    <div class="form-group">
+      <label for="title">Test title (optional)</label>
+      <input type="text" id="title" name="title" value="{{ title }}" placeholder="e.g. GK Passage 1">
+    </div>
+
+    <div class="form-group">
+      <label for="text">Reference text</label>
+      <div class="text-input-area">
+        <textarea id="text" name="text" placeholder="Paste your reference passage here…">{{ text }}</textarea>
+      </div>
+      <div class="input-meta">
+        <span id="wordCount">0 words</span>
+        <span id="charCount">0 characters</span>
+      </div>
+    </div>
+
+    <div class="input-actions">
+      <a href="{{ url_for('home') }}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Start Typing Test →</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const area = document.getElementById('text');
+  const wc = document.getElementById('wordCount');
+  const cc = document.getElementById('charCount');
+  function update() {
+    const text = area.value.trim();
+    wc.textContent = (text ? text.split(/\s+/).length : 0) + ' words';
+    cc.textContent = area.value.length + ' characters';
+  }
+  area.addEventListener('input', update);
+  update();
+</script>
+{% endblock %}
